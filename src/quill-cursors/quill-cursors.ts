@@ -23,6 +23,7 @@ export default class QuillCursors {
   private readonly _boundsContainer: HTMLElement;
   private _currentSelection: IQuillRange;
   private _isObserving = false;
+  private _scale = 1;
 
   public constructor(quill: any, options: IQuillCursorsOptions = {}) {
     this.quill = quill;
@@ -150,13 +151,13 @@ export default class QuillCursors {
     const containerRectangle = this._boundsContainer.getBoundingClientRect();
 
     const endBounds = this.quill.getBounds(endIndex);
-    cursor.updateCaret(endBounds, containerRectangle);
+    cursor.updateCaret(endBounds, containerRectangle, this._scale);
 
     const ranges = this._lineRanges(cursor, startLeaf, endLeaf);
     const selectionRectangles = ranges
       .reduce((rectangles, range) => rectangles.concat(Array.from(RangeFix.getClientRects(range))), []);
 
-    cursor.updateSelection(selectionRectangles, containerRectangle);
+    cursor.updateSelection(selectionRectangles, containerRectangle, this._scale);
   }
 
   private _indexWithinQuillBounds(index: number): number {
@@ -268,5 +269,14 @@ export default class QuillCursors {
         cursor.range.index = delta.transformPosition(cursor.range.index);
         this._updateCursor(cursor);
       });
+  }
+
+  public get scale(): number {
+    return this._scale;
+  }
+
+  public set scale(newValue: number) {
+    this._scale = newValue;
+    this.update();
   }
 }

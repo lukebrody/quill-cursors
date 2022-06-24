@@ -29,6 +29,8 @@ const quillTwo = new Quill('#editor-two', {
 const cursorsOne = quillOne.getModule('cursors');
 const cursorsTwo = quillTwo.getModule('cursors');
 
+cursorsTwo.scale = 2;
+
 cursorsOne.createCursor('cursor', 'User 2', 'blue');
 cursorsTwo.createCursor('cursor', 'User 1', 'red');
 
