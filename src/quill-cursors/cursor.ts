@@ -47,7 +47,7 @@ export default class Cursor {
     const flagElement = element.getElementsByClassName(Cursor.FLAG_CLASS)[0] as HTMLElement;
 
     flagElement.style.backgroundColor = this.color;
-    caretElement.style.backgroundColor = this.color;
+    caretElement.style.setProperty('--color', this.color);
 
     element.getElementsByClassName(Cursor.NAME_CLASS)[0].textContent = this.name;
 
