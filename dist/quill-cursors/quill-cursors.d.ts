@@ -17,7 +17,6 @@ export default class QuillCursors {
     removeCursor(id: string): void;
     update(): void;
     clearCursors(): void;
-    toggleFlag(id: string, shouldShow?: boolean): void;
     cursors(): Cursor[];
     private _registerSelectionChangeListeners;
     private _registerTextChangeListener;

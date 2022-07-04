@@ -25,10 +25,8 @@ export default class Cursor {
   private _el: HTMLElement;
   private _selectionEl: HTMLElement;
   private _caretEl: HTMLElement;
-  private _flagEl: HTMLElement;
   private _hideDelay: string;
   private _hideSpeedMs: number;
-  private _positionFlag: (flag: HTMLElement, caretRectangle: ClientRect, container: ClientRect) => void;
 
   public constructor(id: string, name: string, color: string) {
     this.id = id;
@@ -39,28 +37,22 @@ export default class Cursor {
   public build(options: IQuillCursorsOptions): HTMLElement {
     const element = document.createElement(Cursor.CONTAINER_ELEMENT_TAG);
     element.classList.add(Cursor.CURSOR_CLASS);
-    element.id = `ql-cursor-${ this.id }`;
+    element.id = `ql-cursor-${this.id}`;
     element.innerHTML = options.template;
     const selectionElement = element.getElementsByClassName(Cursor.SELECTION_CLASS)[0] as HTMLElement;
     const caretContainerElement = element.getElementsByClassName(Cursor.CARET_CONTAINER_CLASS)[0] as HTMLElement;
     const caretElement = caretContainerElement.getElementsByClassName(Cursor.CARET_CLASS)[0] as HTMLElement;
-    const flagElement = element.getElementsByClassName(Cursor.FLAG_CLASS)[0] as HTMLElement;
 
-    flagElement.style.backgroundColor = this.color;
     caretElement.style.setProperty('--color', this.color);
 
     element.getElementsByClassName(Cursor.NAME_CLASS)[0].textContent = this.name;
 
     this._hideDelay = `${options.hideDelayMs}ms`;
     this._hideSpeedMs = options.hideSpeedMs;
-    this._positionFlag = options.positionFlag;
-    flagElement.style.transitionDelay = this._hideDelay;
-    flagElement.style.transitionDuration = `${this._hideSpeedMs}ms`;
 
     this._el = element;
     this._selectionEl = selectionElement;
     this._caretEl = caretContainerElement;
-    this._flagEl = flagElement;
 
     return this._el;
   }
@@ -77,24 +69,10 @@ export default class Cursor {
     this._el.parentNode.removeChild(this._el);
   }
 
-  public toggleFlag(shouldShow?: boolean): void {
-    const isShown = this._flagEl.classList.toggle(Cursor.SHOW_FLAG_CLASS, shouldShow);
-    if (isShown) return;
-    this._flagEl.classList.add(Cursor.NO_DELAY_CLASS);
-    // We have to wait for the animation before we can put the delay back
-    setTimeout(() => this._flagEl.classList.remove(Cursor.NO_DELAY_CLASS), this._hideSpeedMs);
-  }
-
   public updateCaret(rectangle: ClientRect, container: ClientRect, scale: number): void {
     this._caretEl.style.top = `${rectangle.top / scale}px`;
     this._caretEl.style.left = `${rectangle.left / scale}px`;
     this._caretEl.style.height = `${rectangle.height / scale}px`;
-
-    if (this._positionFlag) {
-      this._positionFlag(this._flagEl, rectangle, container);
-    } else {
-      this._updateCaretFlag(rectangle, container, scale);
-    }
   }
 
   public updateSelection(selections: ClientRect[], container: ClientRect, scale: number): void {
@@ -104,20 +82,6 @@ export default class Cursor {
     selections = this._sanitize(selections);
     selections = this._sortByDomPosition(selections);
     selections.forEach((selection: ClientRect) => this._addSelection(selection, container, scale));
-  }
-
-  private _updateCaretFlag(caretRectangle: ClientRect, container: ClientRect, scale: number): void {
-    this._flagEl.style.width = '';
-    const flagRect = this._flagEl.getBoundingClientRect();
-
-    this._flagEl.classList.remove(Cursor.FLAG_FLIPPED_CLASS);
-    if (caretRectangle.left > container.width - flagRect.width) {
-      this._flagEl.classList.add(Cursor.FLAG_FLIPPED_CLASS);
-    }
-    this._flagEl.style.left = `${caretRectangle.left / scale}px`;
-    this._flagEl.style.top = `${caretRectangle.top / scale}px`;
-    // Chrome has an issue when doing translate3D with non integer width, this ceil is to overcome it.
-    this._flagEl.style.width = `${Math.ceil(flagRect.width / scale)}px`;
   }
 
   private _clearSelection(): void {
@@ -172,10 +136,10 @@ export default class Cursor {
 
   private _serialize(selection: ClientRect): string {
     return [
-      `top:${ selection.top }`,
-      `right:${ selection.right }`,
-      `bottom:${ selection.bottom }`,
-      `left:${ selection.left }`,
+      `top:${selection.top}`,
+      `right:${selection.right}`,
+      `bottom:${selection.bottom}`,
+      `left:${selection.left}`,
     ].join(';');
   }
 }
