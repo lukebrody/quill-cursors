@@ -45,8 +45,6 @@ export default class Cursor {
 
     caretElement.style.setProperty('--color', this.color);
 
-    element.getElementsByClassName(Cursor.NAME_CLASS)[0].textContent = this.name;
-
     this._hideDelay = `${options.hideDelayMs}ms`;
     this._hideSpeedMs = options.hideSpeedMs;
 
